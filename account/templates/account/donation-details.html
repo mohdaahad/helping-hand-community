@@ -1,0 +1,230 @@
+{% extends 'account/base.html' %}
+{% block title %}HHC - Donation{% endblock title%}
+{% load static %}
+{% block body %}
+        <!-- Page Breadcumb -->
+        <section class="pageBreadcumb pageBreadcumb--style1 position-relative" data-bg-image="{% static 'account/image/bg/pageBreadcumbBg1.jpg' %}">
+            <div class="pageBreadcumbTopDown">
+                <a class="btn btn--styleOne btn--icon btn--icon2 it-btn" href="{% url 'donation_details' %}">
+          <svg class="btn__icon" width="10" height="14" viewBox="0 0 10 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.869141 8.70508L1.45508 8.11914C1.60156 8.00195 1.80664 8.00195 1.95312 8.14844L4.23828 10.4922V0.414062C4.23828 0.208984 4.38477 0.0625 4.58984 0.0625H5.41016C5.58594 0.0625 5.76172 0.208984 5.76172 0.414062V10.4922L8.01758 8.14844C8.16406 8.00195 8.36914 8.00195 8.51562 8.11914L9.10156 8.70508C9.21875 8.85156 9.21875 9.05664 9.10156 9.20312L5.23438 13.0703C5.08789 13.1875 4.88281 13.1875 4.73633 13.0703L0.869141 9.20312C0.751953 9.05664 0.751953 8.85156 0.869141 8.70508Z" fill="#60646B" />
+          </svg>
+          <span class="it-btn__inner">
+          <span class="it-btn__blobs">
+            <span class="it-btn__blob"></span>
+          <span class="it-btn__blob"></span>
+          <span class="it-btn__blob"></span>
+          <span class="it-btn__blob"></span>
+          </span>
+          </span>
+          <svg class="it-btn__animation" xmlns="http://www.w3.org/2000/svg" version="1.1">
+            <defs>
+              <filter>
+                <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo">
+                </feColorMatrix>
+                <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+              </filter>
+            </defs>
+          </svg>
+        </a>
+            </div>
+            <div class="sectionShape sectionShape--top">
+                <img src="{% static 'account/image/shapes/pagebreadcumbShapeTop.svg' %}" alt="hhc">
+            </div>
+            <div class="sectionShape sectionShape--bottom">
+                <img src="{% static 'account/image/shapes/pagebreadcumbShapeBottom.svg' %}" alt="hhc">
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="pageTitle text-center">
+                            <h2 class="pageTitle__heading text-white text-uppercase mb-25">Donation </h2>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Donation </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Page Breadcumb End -->
+        <!-- Donation Details -->
+
+        <section class="donation pt-130 pb-100">
+          <div id="loading-icon" style="display: none;" class="page-container">
+            <div class="loading-container">
+              <div>
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-warning" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            <div class="container">
+                <form id="donation"   method="post" enctype="multipart/form-data"  action="#" class=" commentsPost commentsPost--style2 pt-45 pb-25">
+                      <div class="row g-4">
+                          {% csrf_token %}
+                            <div class="col-md-6">
+                           <div class="commentsPost__input">
+                          {{form.campaigns}} <small class="text-warning">{{form.campaigns.errors|striptags}}</small>
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="commentsPost__input">
+                   {{form.name}} <small class="text-warning">{{form.name.errors|striptags}}</small>
+               </div>
+           </div>   <div class="col-md-6">
+            <div class="commentsPost__input">
+           {{form.email}} <small class="text-warning">{{form.email.errors|striptags}}</small>
+       </div>
+   </div>   <div class="col-md-6">
+    <div class="commentsPost__input">
+   {{form.phone_number}} <small class="text-warning">{{form.phone_number.errors|striptags}}</small>
+</div>
+</div>  
+
+<div class="col-md-6">
+  <div class="commentsPost__input">
+ {{form.amount}} <small class="text-warning">{{form.amount.errors|striptags}}</small>
+</div>
+</div>   
+
+<div class="col-md-6">
+  <div class="commentsPost__input">
+ {{form.pan_card}} <small class="text-warning">{{form.pan_card.errors|striptags}}</small>
+</div>
+</div>
+<div class="col-md-6">
+  <div class="commentsPost__input">
+ {{form.pay_mode}} <small class="text-warning">{{form.pay_mode.errors|striptags}}</small>
+</div>
+</div>
+
+<div class="col-md-6">
+  <div class="commentsPost__input">
+ {{form.pay_id}} <small class="text-warning">{{form.pay_id.errors|striptags}}</small>
+</div>
+</div>
+
+<div class="col-md-12">
+  <div class="commentsPost__input">
+ {{form.donation_date}} <small class="text-warning">{{form.donation_date.errors|striptags}}</small>
+</div>
+</div>
+      
+
+                  <!-- <img src="" alt="" id="image"> -->
+                  <div class="col-12">
+                    <div class="commentsPost__check">
+                        <div class="form-group form-check">
+                          {{form.Certificate_80G}}<small class="text-warning">{{form.Certificate_80G.errors|striptags}}</small>
+                            <label class="form-check-label" for="exampleCheck1">Require 80G Tax Exp. Certificate*</label>
+                        </div>
+                    </div>
+                </div>     
+                <!-- <div id="alert12" class="">
+                </div> -->
+                          <div class="col-12">
+                              <div class="commentsPost__button text-center">
+                                  <button type="submit" class="btn btn--styleOne btn--primary it-btn">
+                    <span class="btn__text">Donate </span>
+                    <i class="fa-solid fa-heart btn__icon"></i>
+                    <span class="it-btn__inner">
+                    <span class="it-btn__blobs">
+                      <span class="it-btn__blob"></span>
+                    <span class="it-btn__blob"></span>
+                    <span class="it-btn__blob"></span>
+                    <span class="it-btn__blob"></span>
+                    </span>
+                    </span>
+                    <svg class="it-btn__animation" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                      <defs>
+                        <filter>
+                          <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+                          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo">
+                          </feColorMatrix>
+                          <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+                        </filter>
+                      </defs>
+                    </svg>
+                  </button>
+                              </div>
+                          </div>
+                      </div>
+                      
+                  </form> 
+                  
+            </div>
+        </section>
+        <!-- Donation Details End -->
+    </main>
+    <!-- Main End -->
+    <!-- <script>
+      $('#donation').submit(function(event) {
+          event.preventDefault();
+          var formData = new FormData(this);
+          $.ajax({
+              type: 'POST',
+              url: window.location.pathname,
+              data: formData,
+              success: function(response) {
+                  $('.error').remove();
+                  var html = '';
+                      if(response){
+                          $('#donation')[0].reset();
+                          html +='<div class="col-md-12"><div class="alert alert-success" role="alert"><i class="fa fa-check-circle" style="color: #4BB543;"></i><strong class="mx-2">Success!</strong> '+response['success']+'</div></div>';
+                      }
+                    
+                      $('#alert12').html(html);
+              },
+                  cache: false,
+                  contentType: false,
+                  processData: false
+                  
+              
+          });
+      });
+      
+      
+      
+      </script> -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var form = document.getElementById('donation');
+          var loadingIcon = document.getElementById('loading-icon');
+      
+          form.addEventListener('submit', function() {
+            loadingIcon.style.display = 'block'; // Show the loading icon
+          });
+        });
+      </script>
+      <script>
+         function updatePayMode() {
+        var payModeSelect = document.getElementById("id_pay_mode");
+        var payIdInput = document.getElementById("id_pay_id");
+        var selectedPayMode = payModeSelect.value;
+
+        if (selectedPayMode === "Cash") {
+          payIdInput.style.display = "none";
+        } else if (selectedPayMode === "UPI") {
+          payIdInput.style.display = "block"; 
+            payIdInput.placeholder = "Enter UPI details";
+        } else if (selectedPayMode === "Cheque") {
+          payIdInput.style.display = "block"; 
+            payIdInput.placeholder = "Enter cheque details";
+        } else if (selectedPayMode === "Net Banking") {
+          payIdInput.style.display = "block"; 
+            payIdInput.placeholder = "Enter net banking details";
+        }
+    }
+      </script>
+      <!-- JavaScript code -->
+   
+      
+    {% endblock body %}
