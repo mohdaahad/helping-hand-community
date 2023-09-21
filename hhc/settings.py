@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'hhc.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+       'default': {
        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'hhc',
         'USER': 'hhc',
@@ -159,3 +159,11 @@ STATICFILES_DIRS = [str(BASE_DIR / 'static')]
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
    
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_STORAGE_BUCKET_NAME = 'hhc-db-backup'
+AWS_QUERYSTRING_AUTH = False
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -40,6 +40,9 @@
                                         {% if request.user.is_authenticated  %}
                                         <li><a class="a" href="{% url 'donation_details' %}">Donations</a></li>
                                         <li><a class="a" href="{% url 'donors_list' %}">Donors List</a></li>
+                                        <li >
+                                            <a class="a" href="{% url 'create_backup' %}">Backup</a>
+                                        </li>
                                         {% endif %}
                                       
                                         <!-- <li><a href="{% url 'blog' %}">Blog</a></li> -->
@@ -166,6 +169,10 @@
                                                 {% if request.user.is_authenticated  %}
                                                 <li class="list menu-item-parent">
                                                     <a class="animation" href="{% url 'donation_details' %}">Donations</a>
+                                                </li>
+                                                <li><a class="a" href="{% url 'donors_list' %}">Donors List</a></li>
+                                                <li >
+                                                    <a class="a" href="{% url 'create_backup' %}">Backup</a>
                                                 </li>
                                                 {% endif %}
                                                 <!-- <li class="list menu-item-parent">

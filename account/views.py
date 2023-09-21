@@ -15,7 +15,8 @@ from datetime import datetime,date
 from django.http.response import HttpResponseRedirect
 # Create your views here.
 from django.contrib.auth import authenticate, login as Login_process ,logout
-
+import boto3
+import subprocess
 
 def get_ip(request):
     ip = request.get_host().split(':')[0]
@@ -300,3 +301,84 @@ def donors_list(request):
         donation_lst.append(donor_dict)
 
     return render(request, 'account/donors-list.html', {'donations': donation_lst})
+
+
+
+
+
+
+
+
+def create_backup():
+    # Define the database settings
+    db_settings = settings.DATABASES['default']
+
+    # Get the database credentials
+    db_name = db_settings['NAME']
+    db_user = db_settings['USER']
+    db_password = db_settings['PASSWORD']
+    db_host = db_settings['HOST']
+    db_port = db_settings['PORT']
+
+    # Specify the backup directory and filename
+    backup_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static/account/db_backup/',)
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    backup_filename = f'db_backup_{timestamp}.sql'
+    result = {
+        'filename': backup_filename,
+        'message': None,
+        'status':False,
+                }
+    # Build the pg_dump command
+    pg_dump_cmd = [
+        'pg_dump',
+        '--dbname', f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}',
+        '--file', os.path.join(backup_dir, backup_filename),
+    ]
+
+    # Run the pg_dump command
+    try:
+        subprocess.run(pg_dump_cmd, check=True)
+        result['message'] = "Database backup successful!!!"
+        result['status'] = True
+    except subprocess.CalledProcessError as e:
+        result['message'] = "Error creating database backup!!!"
+
+    return result
+
+
+def db_backup(request):
+    if request.method == 'POST':
+        backup_info = create_backup()
+        result = backup_info['message']
+        backup_filename = backup_info['filename']
+        status = backup_info['status']
+    else:
+        result = None
+        backup_filename = None
+        status = False
+
+
+    return render(request, 'account/db_backup.html', {'result': result, 'backup_filename': backup_filename,'status':status})
+
+
+
+def upload_backup_to_s3(request, backup_filename):
+    # Specify the local path of the SQL file
+    local_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static/account/db_backup/', backup_filename)
+    # Define the S3 bucket and object key where you want to store the file
+    s3_bucket_name = "hhc-db-backup"
+    s3_object_key = backup_filename
+    
+    s3_client = boto3.client('s3',
+                      aws_access_key_id=settings.AWS_ACCESS_KEY_ID, 
+                      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY, 
+                                   )
+    try:
+        s3_client.upload_file(local_file, s3_bucket_name, s3_object_key)
+        result = 'uploaded successfully to S3!'
+    except Exception as e:
+        result = f'Error uploading to S3: {str(e)}'
+          
+    
+    return render(request, 'account/db_backup.html', {'result_upload': result})
