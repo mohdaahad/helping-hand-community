@@ -55,42 +55,33 @@
         <!-- Donation Details -->
         
         <section class="donation pt-130 pb-100">
-          <div id="loading-icon" style="display: none;" class="page-container">
-            <div class="loading-container">
-              <div>
-                <div class="d-flex justify-content-center">
-                  <div class="spinner-border text-warning" role="status">
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        
-      
             <div class="container">
-               
-                    
-                    
-              <div class="col-12">
+               <div class="col-12">
                 <div class="commentsPost__button text-center">
                     <h2 class="sectionTitle__big mb-5">Db management</h2>
-                
-                    {% if result_upload %}
-                     <p class="mb-5">{{ result_upload }}</p>
-                    {% elif result %}
-                    <p class="mb-5">{{ result }}</p>
-                    {% else %}
+
+
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Don't refresh page</h5>
+                          </div>
+                          <div class="modal-body">
+                            <p id="statusMessage"></p>
+                           
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                    
-                    {% endif %}
                    
             
                     <div class="d-flex justify-content-center">
                         <!-- Create Backup Form -->
                         <div>
-                            <form id="backup-form" method="post" action="{% url 'create_backup' %}">
-                                {% csrf_token %}
-                                <button type="submit" value="Create Backup" class="btn btn--styleOne btn--primary it-btn">
+                           
+                                <button id="backupButton" class="btn btn--styleOne btn--primary it-btn">
                                     <span class="btn__text">Backup</span>
                                     <!-- ... (rest of the button HTML) -->
                                     <i class="fa-solid fa-heart btn__icon"></i>
@@ -113,15 +104,14 @@
                                       </defs>
                                     </svg>
                                 </button>
-                            </form>
+                            
                         </div>
             
                         <!-- Upload to S3 Form -->
-                        {% if status %}
+                      
                         <div class="mx-2" > 
-                          <form id="upload-form" method="post" action="{% url 'upload_to_s3' backup_filename=backup_filename %}"  >
-                              {% csrf_token %}
-                              <button type="submit" value="Upload to S3" class="btn btn--styleOne btn--primary it-btn">
+                          
+                              <button class="btn btn--styleOne btn--primary it-btn" id="uploadButton" style="display: none;" data-upload-url="{% url 'upload_to_s3' backup_filename='PLACEHOLDER' %}">
                                   <span class="btn__text">Upload to S3</span>
                           
                                   <i class="fa-solid fa-heart btn__icon"></i>
@@ -150,7 +140,7 @@
               </div>
           </div>
           
-                        {% endif %}
+                       
                        
                
             </div>
@@ -163,20 +153,57 @@
 
 </body>
 </html>
+<script>
+  $(document).ready(function() {
+    $("#backupButton").click(function() {
+      // Show the backup progress bar
+      var statusModal = $("#exampleModalCenter");
+      var statusMessage = $("#statusMessage");
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var form_back = document.getElementById('backup-form');
-        var loadingIcon = document.getElementById('loading-icon');
-        var form_upload = document.getElementById('upload-form');
-        form_back.addEventListener('submit', function() {
-          loadingIcon.style.display = 'block'; // Show the loading icon
-        }); 
-        form_upload.addEventListener('submit', function() {
-          loadingIcon.style.display = 'block'; // Show the loading icon
-        });
+      
+      statusMessage.text("Creating database backup...");
+      statusModal.modal("show");
+      $.ajax({
+        url: "{% url 'create_backup' %}",
+        success: function(data) {
+          $("#status").text(data.message);
+          if (data.status) {
+            statusMessage.text(data.message);
+            statusModal.modal("show"); // 
+            // Show the upload button if backup is successful
+            $("#uploadButton").show();    
+            var uploadUrl = $("#uploadButton").data("upload-url").replace('PLACEHOLDER', data.filename);
+            $("#uploadButton").data("upload-url", uploadUrl);
+          }
+          setTimeout(function() {
+          statusModal.modal("hide");
+        }, 3000);
+        }
       });
-  
+    });
 
-    </script>
+    $("#uploadButton").click(function() {
+      // Show the upload progress bar
+      var statusModal = $("#exampleModalCenter");
+      var statusMessage = $("#statusMessage");
+      statusMessage.text("Uploading to S3...");
+      statusModal.modal("show");
+      var uploadUrl = $("#uploadButton").data("upload-url");
+
+      $.ajax({
+       
+        url: uploadUrl,  // Use the dynamically generated uploadUrl
+        success: function(uploadData) {
+          statusMessage.text(uploadData.message);
+          statusModal.modal("show");
+          setTimeout(function() {
+          statusModal.modal("hide");
+        }, 3000);
+
+        }
+      });
+    });
+  });
+</script>
+
     {% endblock body %}

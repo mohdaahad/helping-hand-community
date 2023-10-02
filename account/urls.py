@@ -28,7 +28,9 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('donors_list/', views.donors_list, name='donors_list'),
-    path('db_backup/', views.db_backup, name='create_backup'),
+    path('db_backup/', views.db_backup, name='db_backup'),
+    path('db_backup_create/', views.create_backup, name='create_backup'),
     path('upload_to_s3/<str:backup_filename>', views.upload_backup_to_s3, name='upload_to_s3'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

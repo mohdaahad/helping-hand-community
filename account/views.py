@@ -307,12 +307,8 @@ def donors_list(request):
 
 
 
-
-
-def create_backup():
-    # Define the database settings
+def create_backup(request):
     db_settings = settings.DATABASES['default']
-
     # Get the database credentials
     db_name = db_settings['NAME']
     db_user = db_settings['USER']
@@ -335,7 +331,7 @@ def create_backup():
         '--dbname', f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}',
         '--file', os.path.join(backup_dir, backup_filename),
     ]
-
+    
     # Run the pg_dump command
     try:
         subprocess.run(pg_dump_cmd, check=True)
@@ -343,42 +339,31 @@ def create_backup():
         result['status'] = True
     except subprocess.CalledProcessError as e:
         result['message'] = "Error creating database backup!!!"
-
-    return result
-
+    return JsonResponse(result)
+    
 
 def db_backup(request):
-    if request.method == 'POST':
-        backup_info = create_backup()
-        result = backup_info['message']
-        backup_filename = backup_info['filename']
-        status = backup_info['status']
-    else:
-        result = None
-        backup_filename = None
-        status = False
+    default_backup_filename = "your_default_backup_filename.sql"  # Set a default value or retrieve it from your database
+    return render(request, 'account/db_backup.html', {'backup_filename': default_backup_filename})
 
 
-    return render(request, 'account/db_backup.html', {'result': result, 'backup_filename': backup_filename,'status':status})
-
-
-
-def upload_backup_to_s3(request, backup_filename):
-    # Specify the local path of the SQL file
+def upload_backup_to_s3(request,backup_filename):
     local_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static/account/db_backup/', backup_filename)
     # Define the S3 bucket and object key where you want to store the file
     s3_bucket_name = "hhc-db-backup"
     s3_object_key = backup_filename
     
     s3_client = boto3.client('s3',
-                      aws_access_key_id=settings.AWS_ACCESS_KEY_ID, 
-                      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY, 
-                                   )
+                    aws_access_key_id=settings.AWS_ACCESS_KEY_ID, 
+                    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY, 
+                                )
     try:
         s3_client.upload_file(local_file, s3_bucket_name, s3_object_key)
-        result = 'uploaded successfully to S3!'
+        result = 'uploaded successfully to S3!!!'
+        return JsonResponse({'status': True,'massage':result})
     except Exception as e:
         result = f'Error uploading to S3: {str(e)}'
+        return JsonResponse({'status': False,'massage':result})
           
     
-    return render(request, 'account/db_backup.html', {'result_upload': result})
+    
